@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Api Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <style>
+        .content-table li {
+            padding: 0.25rem 0.75rem;
+        }
+
+        .content-table li a {
+            color: #dc3545;
+            display: block;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="h1 text-center mt-5">Company ABC</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-3 bg-light p-3 border border-dark">
+                <h2>Table of contents</h2>
+                <ol class="content-table">
+                    <li>
+                        <a href="#api-1">Customer eligible check API</a>
+                        <ol>
+                            <li><a href="#api-1-1">Possible Request Body</a></li>
+                            <li><a href="#api-1-2">Possible Statuses and Bodies of Responses</a></li>
+                        </ol>
+                    </li>
+
+                    <li>
+                        <a href="#api-2">Validate photo submission API</a>
+                        <ol>
+                            <li><a href="#api-2-1">Possible Request Body</a></li>
+                            <li><a href="#api-2-2">Possible Statuses and Bodies of Responses</a></li>
+                        </ol>
+                    </li>
+                </ol>
+            </div>
+            <div class="col-9">
+                <section class="container mt-5">
+                    <h2 class="text-danger" id="api-1">#1 Customer eligible check API</h2>
+                    <p class="bg-light p-3"><code>GET /api/v1/campaign/participate</code></p>
+            
+                    <table class="table table-bordered caption-top w-25">
+                        <caption>Request</caption>
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>customer_id</td>
+                                <td>Number</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            
+                    <table class="table table-bordered caption-top w-75">
+                        <caption>Response</caption>
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>meta.customer_id</td>
+                                <td>Number</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>meta.success</td>
+                                <td>Boolean</td>
+                                <td>
+                                    <code class="fw-bold">true</code> is for customer is eligible.<br>
+                                    <code class="fw-bold">false</code> is when vouchers are not available or customer is not eligible.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>meta.message</td>
+                                <td>String</td>
+                                <td>This message is only for success: <code class="fw-bold">true</code> condition</td>
+                            </tr>
+            
+                            <tr>
+                                <td>errors.code</td>
+                                <td>Number</td>
+                                <td>
+                                    <code class="fw-bold">1</code> means vouchers are fully redeemed or locked down.<br>
+                                    <code class="fw-bold">2</code> means customer doesn't meet one or all of criteria.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>errors.message</td>
+                                <td>String</td>
+                                <td>The message describes the detail of each error.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            
+                    <h3 class="mt-5 text-danger" id="api-1-1">#1.1 Possible Request Body</h3>
+                    <p class="bg-light p-3"><code class="text-dark">{"customer_id": 1}</code></p>
+            
+                    <h3 class="mt-5 text-danger" id="api-1-2">#1.2 Possible Statuses and Bodies of Responses</h3>
+                    <div class="container">
+                        <div class="row mt-3">
+                            <div class="col">
+                                <h4>Status <code>422</code></h4>
+                                <p>When customer_id is not included in request.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "message": "The customer id field is required.",
+                                            "errors": {
+                                                "customer_id": [
+                                                    "The customer id field is required."
+                                                ]
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <h4>Status <code>404</code></h4>
+                                <p>When customer_id doesn't exist.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 21
+                                            },
+                                            "errors": {
+                                                "message": "Customer with id 21 doesn't exist."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="row mt-4">
+                            <div class="col">
+                                <h4>Status <code>200</code></h4>
+                                <p>When customer is eligible to participate.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 20,
+                                                "success": true,
+                                                "message": "Locked down a voucher. Need to send a qualified photo within 10 minutes to redeem it."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <h4>Status <code>200</code></h4>
+                                <p>When vouchers are fully redeemed or locked down.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "success": false
+                                            },
+                                            "errors": {
+                                                "code": 1,
+                                                "message": "Vouchers are fully redeemed or locked down."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="row mt-4">
+                            <div class="col">
+                                <h4>Status <code>200</code></h4>
+                                <p>When customer request a voucher code again.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 20,
+                                                "success": false
+                                            },
+                                            "errors": {
+                                                "code": 2,
+                                                "message": "Each customer is allowed to redeem 1 cash voucher only."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <h4>Status <code>200</code></h4>
+                                <p>When customer's number of purchase transactions is less than 3 within 30 days.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 19,
+                                                "success": false
+                                            },
+                                            "errors": {
+                                                "code": 2,
+                                                "message": "Customer with id 19 haven't completed 3 purchase transactions within the last 30 days."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+            
+                            <div class="col">
+                                <h4>Status <code>200</code></h4>
+                                <p>When customer's total spent less than $100.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 6,
+                                                "success": false
+                                            },
+                                            "errors": {
+                                                "code": 2,
+                                                "message": "Total transactions equal or more than $100."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <hr>
+                <hr>
+                <section class="container mt-5">
+                    <h2 class="text-danger" id="api-2">#2 Validate photo submission API</h2>
+                    <p class="bg-light p-3"><code>POST /api/v1/campaign/getVoucher</code></p>
+            
+                    <table class="table table-bordered caption-top w-50">
+                        <caption>Request</caption>
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>customer_id</td>
+                                <td>Number</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>image</td>
+                                <td>file</td>
+                                <td>Accept types are <code>jpg,png,jpeg</code> and maximun upload size is 4096KB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            
+                    <table class="table table-bordered caption-top w-75">
+                        <caption>Response</caption>
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>meta.customer_id</td>
+                                <td>Number</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>meta.success</td>
+                                <td>Boolean</td>
+                                <td>
+                                    <code class="fw-bold">true</code> is when customer get a voucher code.<br>
+                                    <code class="fw-bold">false</code> is when customer photo is not qualified or customer request when out of time.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>meta.message</td>
+                                <td>String</td>
+                                <td>This message is only for success: <code class="fw-bold">true</code> condition</td>
+                            </tr>
+            
+                            <tr>
+                                <td>data.voucher_code</td>
+                                <td>String</td>
+                                <td>-</td>
+                            </tr>
+            
+                            <tr>
+                                <td>errors.code</td>
+                                <td>Number</td>
+                                <td>
+                                    <code class="fw-bold">1</code> means there is no locked down voucher code for customer.<br>
+                                    <code class="fw-bold">2</code> means customer photo is not qualified.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>errors.message</td>
+                                <td>String</td>
+                                <td>The message describes the detail of each error.</td>
+                            </tr>
+                            <tr>
+                                <td>errors.image[]</td>
+                                <td>Array</td>
+                                <td>Array of image's relative errors.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            
+                    <h3 class="mt-5 text-danger" id="api-2-1">#2.1 Possible Request Body</h3>
+                    <p class="bg-light p-3"><code class="text-dark">{"customer_id": 15, "image": undefined }</code></p>
+                    <p class="fs-6 text-danger">* Note: <code>"image"</code> is a field name of file.</p>
+            
+                    <h3 class="mt-5 text-danger" id="api-2-2">#2.2 Possible Statuses and Bodies of Responses</h3>
+                    <div class="container">
+                        <div class="row mt-3">
+                            <div class="col">
+                                <h4>Status <code>422</code></h4>
+                                <p>When customer_id is not included in request and/or uploaded file is not image or over the maximun size.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "message": "The customer id field is required. (and 1 more error)",
+                                            "errors": {
+                                                "customer_id": [
+                                                    "The customer id field is required."
+                                                ],
+                                                "image": [
+                                                    "The image field is required."
+                                                ]
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+            
+                            <div class="col">
+                                <h4>Status <code>404</code></h4>
+                                <p>When customer_id doesn't exist.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 21
+                                            },
+                                            "errors": {
+                                                "message": "Customer with id 21 doesn't exist."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="row mt-5">
+                            <div class="col">
+                                <h4>Status <code>200</code></h4>
+                                <p>When customer get successfully a voucher.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 17,
+                                                "success": true,
+                                                "message": "Allocate the locked voucher to the customer with id 17."
+                                            },
+                                            "data": {
+                                                "voucher_code": "48R7M49"
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                <h4>Status <code>200</code></h4>
+                                <p>When customer's locked down voucher is not found or may be out of time.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 2,
+                                                "success": false
+                                            },
+                                            "errors": {
+                                                "code": 1,
+                                                "message": "There is no locked down voucher for customer with id 2. May be out of time."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+            
+                            <div class="col">
+                                <h4>Status <code>200</code></h4>
+                                <p>When customer photo is not qualified.</p>
+                                <div class="bg-light p-3">
+                                    <code class="text-dark">
+                                        {
+                                            "meta": {
+                                                "customer_id": 17,
+                                                "success": false
+                                            },
+                                            "errors": {
+                                                "code": 2,
+                                                "message": "Photo of customer with id 17 is not qualified."
+                                            }
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
