@@ -10,6 +10,8 @@ use App\Http\Requests\V1\CampaignRequest;
 class CampaignService
 {
     /**
+     * Check customer eligiblity to participate this campaign and locked down voucher when customer is eligible.
+     * 
      * @param App\Http\Requests\V1\CampaignRequest
      * @return \Illuminate\Http\Response
      */
@@ -71,6 +73,78 @@ class CampaignService
                 'message' => "Locked down a voucher. Need to send a qualified photo within 10 minutes to redeem it.",
             ],
         ], 200);
+    }
+
+    /**
+     * Validate photo submission and when validation success, give voucher code to customer
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function getVoucher(CampaignRequest $request)
+    {
+        # Check customer whether exit or not in database
+        if(!$customer = Customer::find($request->customer_id)) {
+
+            return response()->json([
+                'meta' => [
+                    'customer_id' => $request->customer_id,
+                ],
+                'errors' => [
+                    'message' => "Customer with id " . $request->customer_id . " doesn't exist."
+                ]
+            ], 404);
+        }  
+    
+        # Unlock all vouchers that are locked down out of time.
+        $this->unlockLockedDownExpiredVouchers();
+
+        # Check whether a qualified photo or not
+        if($this->checkImage()) {
+            
+             # Check whether locked down a voucher for customer
+             if($voucher = Voucher::where('customer_id', $request->customer_id)->first()) {
+
+                $voucher->status = 'redeemed';
+                $voucher->save();
+
+                return response()->json([
+                    'meta' => [
+                        'customer_id' => $request->customer_id,
+                        'success' => true,
+                        'message' => "Allocate the locked voucher to the customer with id " . $request->customer_id . ".",
+                    ], 
+                    'data' => [
+                        'voucher_code' => $voucher->code,
+                    ],
+                ], 200);
+
+            } else {
+
+                return response()->json([
+                    'meta' => [
+                        'customer_id' => $request->customer_id,
+                        'success' => false,
+                    ],
+                    'errors' => [
+                        'code' => 1,
+                        'message' => "There is no locked down voucher for customer with id " . $request->customer_id . ". May be out of time.",
+                    ],
+                ], 200);
+            }
+
+        } else {
+
+            return response()->json([
+                'meta' => [
+                    'customer_id' => $request->customer_id,
+                    'success' => false,
+                ],
+                'errors' => [
+                    'code' => 2,
+                    'message' => "Photo of customer with id " . $request->customer_id . " is not qualified.",
+                ],
+            ], 200);
+        }
     }
 
     /**
@@ -140,5 +214,21 @@ class CampaignService
         $voucher->save();
     }
 
+    /**
+     * Validate whether the photo is qualified or not using image recognition API
+     * 
+     * 
+     * @return Boolean
+     * 
+     */
+    private function checkImage()
+    {
+        /**
+         * Using the image recognition API to specify whether a qualified photo or not
+         * 
+         */
+
+        return true;
+    }
 
 }

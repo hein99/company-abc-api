@@ -20,4 +20,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\Api\V1', 'middleware' => 'auth:sanctum'], function() {
     Route::get('/campaign/participate', ['uses' => 'CampaignController@participate']);
+    Route::post('/campaign/getVoucher', ['uses' => 'CampaignController@getVoucher']);
 });

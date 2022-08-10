@@ -22,6 +22,17 @@ class CampaignController extends Controller
         return $campaign->enterCampaign($request);
     }
 
-    
+    /**
+     * Validate photo submission and when validation success, give voucher code to customer
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    public function getVoucher(CampaignRequest $request)
+    {
+        $campaign = new CampaignService;
+
+        return $campaign->getVoucher($request);
+    }
+
 
 }
