@@ -3,7 +3,7 @@
 ### Installation
 1. Clone the repo
 ```sh
-git clone https://github.com/hein99/company-abc.git
+git clone https://github.com/hein99/company-abc-api.git
 ```
 2. Install Composer packages
 ```sh
