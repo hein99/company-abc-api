@@ -1,4 +1,11 @@
-## Give Away Voucher Campaign
+## About the project
+This is a simple project to practice API concept.
+You can find the 'API_information.pdf' file that explain the business requirements and development scope.
+
+### Documentation and Logic process for each API works
+You can find these files in this repo
+Documentation => api-documentation.html <br>
+Logic of Api works => ABC_Campaign_API_Flowcharts.pdf
 
 ### Installation
 1. Clone the repo
@@ -42,7 +49,3 @@ POST /api/v1/campaign/getVoucher
 ```
 
 
-### Documentation and Logic process for each API works
-#### You can find these files in this repo
-Documentation => api-documentation.html <br>
-Logic of Api works => ABC_Campaign_API_Flowcharts.pdf
